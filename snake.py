@@ -1,3 +1,6 @@
+#add borders
+#collision with herself
+
 import os
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 import pygame
@@ -97,19 +100,32 @@ class Snake:
         food_rect = pygame.draw.rect(win, RED, (self.food.x, self.food.y, RECT_DIM, RECT_DIM))
         if snake_rect.colliderect(food_rect):
             self.grow()
+            return True
     
     #def die(self):
      #   for part in self.tail:
      
     def handle_keydown(self, key):
         if key == pygame.K_UP:
-            self.dir = UP
+            if self.dir == DOWN:
+                return
+            else:
+                self.dir = UP
         if key == pygame.K_DOWN:
-            self.dir = DOWN  
+            if self.dir == UP:
+                return
+            else:
+                self.dir = DOWN  
         if key == pygame.K_LEFT:
-            self.dir = LEFT
+            if self.dir == RIGHT:
+                return
+            else:
+                self.dir = LEFT
         if key == pygame.K_RIGHT:
-            self.dir = RIGHT
+            if self.dir == LEFT:
+                return
+            else:
+                self.dir = RIGHT
 
 
 
