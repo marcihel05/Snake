@@ -1,11 +1,11 @@
 #add borders
 #collision with herself
 
+import random
 import os
+import time
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 import pygame
-import random
-import time
 
 WIN_WIDTH = 800
 WIN_HEIGHT = 800
@@ -26,9 +26,9 @@ pygame.font.init()
 
 SCORE_FONT = pygame.font.SysFont("monospace", 25)
 GAME_OVER_FONT = pygame.font.SysFont("monospace", 50)
-overtext = GAME_OVER_FONT.render("Game Over", 1, (0,0,0))
-continuetext1 = GAME_OVER_FONT.render("Press Enter", 1, (0,0,0))
-continuetext2 = GAME_OVER_FONT.render("to start again", 1, (0,0,0))
+OVERTEXT = GAME_OVER_FONT.render("Game Over", 1, WHITE)
+CONTINUETEXT1 = GAME_OVER_FONT.render("Press Enter", 1, WHITE)
+CONTINUETEXT2 = GAME_OVER_FONT.render("to start again", 1, WHITE)
 
 FPS = 10
 
@@ -102,8 +102,10 @@ class Snake:
             self.grow()
             return True
     
-    #def die(self):
-     #   for part in self.tail:
+    def die(self):
+        if self.x-RECT_DIM == WIN_WIDTH or self.x == 0 or self.y == 0 or self.y == WIN_HEIGHT:
+            return True
+     #  for part in self.tail:
      
     def handle_keydown(self, key):
         if key == pygame.K_UP:
@@ -153,12 +155,12 @@ def game_over(win, score):
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
                     return false
-    scoretext = GAME_OVER_FONT.render("Score = "+str(score), 1, WHITE)
-    win.blit(scoretext, (150,250))
-    win.blit(overtext, (150,100))
-    win.blit(continuetext1, (100,400))
-    win.blit(continuetext2, (80,450))
-    pygame.display.update()
+        scoretext = GAME_OVER_FONT.render("Score = "+str(score), 1, WHITE)
+        win.blit(scoretext, (250,250))
+        win.blit(OVERTEXT, (250,100))
+        win.blit(CONTINUETEXT1, (250,400))
+        win.blit(CONTINUETEXT2, (200,480))
+        pygame.display.update()
 
 def main():
     run = True
@@ -183,19 +185,15 @@ def main():
             snake.move()
             if snake.eat(win):
                 score+=1
-            #if snake.die():
-             #   play = False
+            if snake.die():
+                play = False
             draw_window(win, snake, score)
-        if play == False and run == True:
+        if not play and run:
             if game_over(win, score):
                 run = False
     
     pygame.quit()   
     quit()
-    
-                
-        
-
 
 if __name__ == '__main__':
     main()
