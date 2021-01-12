@@ -1,4 +1,3 @@
-#add borders
 #collision with herself
 
 import random
@@ -7,8 +6,8 @@ import time
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 import pygame
 
-WIN_WIDTH = 800
-WIN_HEIGHT = 800
+WIN_WIDTH = 600
+WIN_HEIGHT = 600
 
 RECT_DIM = 20
 
@@ -34,7 +33,7 @@ FPS = 10
 
 class Snake:
     def __init__(self):
-        self.x = 600
+        self.x = WIN_WIDTH-100
         self.y = 300
         self.tail = [(self.x+RECT_DIM, self.y), (self.x+2*RECT_DIM, self.y)]
         self.len = 3
@@ -102,9 +101,16 @@ class Snake:
             self.grow()
             return True
     
-    def die(self):
-        if self.x-RECT_DIM == WIN_WIDTH or self.x == 0 or self.y == 0 or self.y == WIN_HEIGHT:
+    def die(self, win):
+        if self.x + RECT_DIM > WIN_WIDTH or self.x < 0 or self.y < 0 or self.y + RECT_DIM > WIN_HEIGHT: #borders
             return True
+        head = (self.x, self.y, RECT_DIM, RECT_DIM)
+        head_rect = pygame.draw.rect(win, WHITE, head)
+        for i in range (1, self.len-2):
+            tail_rect = pygame.draw.rect(win, WHITE, (self.tail[i][0], self.tail[i][1], RECT_DIM, RECT_DIM))
+            if head_rect.colliderect(tail_rect):
+                return True
+
      #  for part in self.tail:
      
     def handle_keydown(self, key):
@@ -134,8 +140,8 @@ class Snake:
 class Food:
     def __init__(self):
         random.seed(time.time())
-        self.x = random.randrange(40, 750)
-        self.y = random.randrange(40, 750)
+        self.x = random.randrange(40, WIN_WIDTH-50)
+        self.y = random.randrange(40, WIN_WIDTH-50)
     
     def draw(self,win):
         pygame.draw.rect(win, RED, (self.x, self.y, RECT_DIM, RECT_DIM))
@@ -154,12 +160,13 @@ def game_over(win, score):
                 return True
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
-                    return false
+                    return False
+        win.fill(BLACK)
         scoretext = GAME_OVER_FONT.render("Score = "+str(score), 1, WHITE)
-        win.blit(scoretext, (250,250))
-        win.blit(OVERTEXT, (250,100))
-        win.blit(CONTINUETEXT1, (250,400))
-        win.blit(CONTINUETEXT2, (200,480))
+        win.blit(scoretext, (WIN_WIDTH/2-WIN_WIDTH/4,WIN_HEIGHT/3))
+        win.blit(OVERTEXT, (WIN_WIDTH/2-WIN_WIDTH/4,WIN_HEIGHT/6))
+        win.blit(CONTINUETEXT1, (WIN_WIDTH/2-WIN_WIDTH/4,WIN_HEIGHT/2))
+        win.blit(CONTINUETEXT2, (WIN_WIDTH/2-WIN_WIDTH/4-50,WIN_HEIGHT/2+75))
         pygame.display.update()
 
 def main():
@@ -185,7 +192,7 @@ def main():
             snake.move()
             if snake.eat(win):
                 score+=1
-            if snake.die():
+            if snake.die(win):
                 play = False
             draw_window(win, snake, score)
         if not play and run:
