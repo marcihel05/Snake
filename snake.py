@@ -1,5 +1,3 @@
-#collision with herself
-
 import random
 import os
 import time
@@ -48,8 +46,10 @@ class Snake:
     
     
     def move(self):
-        for i in reversed(range(1, self.len-1)):
-                self.tail[i] = self.tail[i-1]
+        i = self.len -2
+        while i > 0:
+            self.tail[i] = self.tail[i-1]
+            i-=1
         self.tail[0] = (self.x, self.y)
 
         if self.dir == LEFT:
